@@ -2,10 +2,13 @@ let Bottle;
 let BottleGif;
 let value;
 let playState = 0;
+let waterRefill;
+let water = 0;
 
 function preload(){
-  Bottle = loadImage('images/BOTTLE.01.png',0,0,width/18000,height/18000);
+  Bottle = loadImage('images/BOTTLE.01.png',0,0);
   BottleGif = loadImage('images/bottle.gif');
+  waterRefill = loadImage('images/waterrefill.gif')
 }
 
 function setup() {
@@ -35,10 +38,22 @@ function draw() {
     playState = 4
   }
   playState = playState - 1
+  if (water == 1){
+    image(waterRefill,0,0)
+  }
 } 
 
 function deviceShaken() {
   if (window.sensorsEnabled) {
     playState = playState + 2;
   }
+}
+
+function touchStarted(){
+  if (window.sensorsEnabled){
+    water = 1 
+  }
+}
+function touchEnded(){
+  water = 0
 }
