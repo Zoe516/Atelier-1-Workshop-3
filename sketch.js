@@ -4,6 +4,7 @@ let value;
 let playState = 0;
 let waterRefill;
 let water = 0;
+let frustration = 0;
 
 function preload(){
   Bottle = loadImage('images/BOTTLE.01.png',0,0);
@@ -14,11 +15,8 @@ function preload(){
 function setup() {
   showDebug();
   createCanvas(windowWidth, windowHeight);
-  // Enable device sensors in p5-phone
-  enableGyroTap();  // Enables accelerometer/gyro
+  enableGyroTap();
   lockGestures();
-  
-  // Note: User must grant permission on first interaction
 }
 
 function draw() {
@@ -41,14 +39,16 @@ function draw() {
   if (water == 1){
     image(waterRefill,0,0)
   }
+  if (frustration == 10){
+    //some kind of frustration interaction maybe a colour filter to show red anger. 
+  }
 } 
-
 function deviceShaken() {
   if (window.sensorsEnabled) {
     playState = playState + 2;
+    frustration = frustration + 1
   }
 }
-
 function touchStarted(){
   if (window.sensorsEnabled){
     water = 1 
