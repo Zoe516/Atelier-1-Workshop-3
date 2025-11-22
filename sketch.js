@@ -4,14 +4,18 @@ let value;
 let playState = 0;
 let waterRefill;
 let water = 0;
-let frustration = 0;
+let frustration = 20;
+let frustrationAmount = 0;
 let angryBottle;
-let timer = 20
-let timer1 = 60
+let park;
+let beach;
+let timer2 = 0;
+let timer1 = 5;
 let button;
 let button1;
 let button2;
 let button3;
+let location1 = true;
 
 /* create classes in different sketch.js's because that will make it 
 so much easier to manage and keep track of everything. storing the talking
@@ -24,8 +28,10 @@ writing on notepad
 function preload(){
   Bottle = loadImage('images/BOTTLE.01.png');
   BottleGif = loadImage('images/bottle.gif');
-  waterRefill = loadImage('images/waterrefill.gif')
-  angryBottle = loadImage('images/angry_bottle.gif')
+  waterRefill = loadImage('images/waterrefill.gif');
+  angryBottle = loadImage('images/angry_bottle.gif');
+  park = loadImage('images/Park_stock.png');
+  beach = loadImage('images/Better_beach_stock.jpg');
 }
 
 function setup() {
@@ -33,11 +39,17 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   enableGyroTap();
   lockGestures();
-  loadValuesFromStorage();
+ // loadValuesFromStorage();
 }
 
 function draw() {
   background(220);
+  if(location1 == true){
+    image(park,0,0,width,height)
+  }
+  else if(location1 == false){
+    image(beach,0,0,width,height) 
+  }
   if(playState>=1)
     { 
     image(BottleGif,0,0)
@@ -79,38 +91,41 @@ function draw() {
     strokeWeight(4);
     text(':(, now tap to make her feel better.', 15, 425);
   }
+  if (window.sensorsEnabled && timer1 >0){
+   textAlign(CENTER, CENTER);
+   textSize(100);
+   text(timer1, width/2, height/2); 
+   if (frameCount % 60 == 0 && timer1 > 0) { 
+     timer1 --;
+   }
+   if (timer1 == 0) {
+     location1 = false 
+     timer2 = 10
+   }
+  }
+   if (window.sensorsEnabled && timer2 >0){
+   textAlign(CENTER, CENTER);
+   textSize(100);
+   text(timer2, width/2, height/2); 
+   if (frameCount % 60 == 0 && timer2 > 0) { 
+     timer2 --;
+   }
+   if (timer2 == 0) {
+     timer2 = 0
+   }
+  }
   textAlign(CENTER, CENTER);
   textSize(100);
-  text(timer1, width/2, height/2);
+  text(frustration, 400, 100); 
   
-  if (frameCount % 60 == 0 && timer > 0) { 
-    timer --;
-  }
-  if (timer == 0) {
-    //background change
-  }
-  textAlign(CENTER, CENTER);
-  textSize(100);
-  text(timer1, width/2, height/2);
+  button = createButton('talk');
+  button.touchStarted(startConversation);
   
-  if (frameCount % 60 == 0 && timer > 0) { 
-    timer --;
-  }
-  if (timer == 0) {
-    text("Hello? Where did you go?", width/2, height*0.7);
-    //image change to sad lonely state
-  }
-  
-  button = createButton('talk')
-  button.touchStarted(speech)
-  
-  if (speech){
+ /* if (speech == true){
     startConversation()
   }
-
-  saveValuesToStorage();
-  
-  timer1 = timer1.value;
+*/
+  frustration = frustration - frustrationAmount
 } 
 
 function deviceShaken() {
@@ -123,7 +138,7 @@ function deviceShaken() {
 function touchStarted(){
   if (window.sensorsEnabled){
     water = 1 
-    frustration = frustration - 10
+    frustrationAmount = 1
   }
 }
 
@@ -132,5 +147,15 @@ function touchEnded(){
 }
 
 function startConversation(){
+  button1 = createButton('What do you like to do?')
+  button1.touchStarted(one)
   
+  if (one){
+    textSize(32);
+    fill(255);
+    stroke(0);
+    strokeWeight(4);
+    text('I love to go surfing! Its my favourite thing to do. The ocean is the most magnificent place to be. The clear blue water, the seaweed and coral reefs give me great peace!', 15, 425);
+  }
+  button2 = createButton()
 }
