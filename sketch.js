@@ -1,6 +1,6 @@
 let Bottle;
 let BottleGif;
-let value;
+//let value = 0;
 let playState = 0;
 let waterRefill;
 let water = 0;
@@ -10,12 +10,14 @@ let angryBottle;
 let park;
 let beach;
 let timer2 = 0;
-let timer1 = 5;
+let timer1 = 60;
 let button;
 let button1;
 let button2;
 let button3;
 let location1 = true;
+let characterPosx = 0;
+let characterLook;
 
 /* create classes in different sketch.js's because that will make it 
 so much easier to manage and keep track of everything. storing the talking
@@ -24,6 +26,13 @@ function, locations, and interactions in different files*/
 first location and second location, second location is water tower:
 writing on notepad 
 */
+let myCharacter = {
+  x: characterPosx,
+  y: 0,
+  display: function(){
+    characterLook = Image(Bottle,characterPosx,0,width,height);
+  }
+}
 
 function preload(){
   Bottle = loadImage('images/BOTTLE.01.png');
@@ -39,7 +48,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   enableGyroTap();
   lockGestures();
- // loadValuesFromStorage();
+  angleMode(DEGREES);
 }
 
 function draw() {
@@ -52,11 +61,11 @@ function draw() {
   }
   if(playState>=1)
     { 
-    image(BottleGif,0,0)
+    characterLook = image(BottleGif,0,0)
     }
   else if(playState <= 0)
     {
-    image(Bottle,0,0) 
+    characterLook = image(Bottle,0,0) 
     }
   if (playState <= 0){
   playState = 0
@@ -66,11 +75,13 @@ function draw() {
   }
   playState = playState - 1
   if (frustration >= 75){
-    image(angryBottle,0,0)
+    characterLook = image(angryBottle,0,0)
   }
+  /*
   if (frustration >= 100){
     frustration = 100
   }
+  */
   else if (frustration <= 0){
     frustration = 0
   }
@@ -116,22 +127,28 @@ function draw() {
   }
   textAlign(CENTER, CENTER);
   textSize(100);
-  text(frustration, 400, 100); 
+  text(frustration, 300, 100); 
   
-  button = createButton('talk');
-  button.touchStarted(startConversation);
+//  button = createButton('talk');
+//  button.touchStarted(startConversation);
   
  /* if (speech == true){
     startConversation()
   }
 */
   frustration = frustration - frustrationAmount
+/*
+  if (window.sensorsEnabled){
+    let rz = rotationZ;
+    frustration = int(rz)
+  }
+  */
 } 
 
 function deviceShaken() {
   if (window.sensorsEnabled) {
     playState = playState + 2;
-    frustration = frustration + 1
+    frustration = frustration + 0.5
   }
 }
 
@@ -144,8 +161,9 @@ function touchStarted(){
 
 function touchEnded(){
   water = 0
+  frustrationAmount = 0
 }
-
+/*
 function startConversation(){
   button1 = createButton('What do you like to do?')
   button1.touchStarted(one)
@@ -159,3 +177,4 @@ function startConversation(){
   }
   button2 = createButton()
 }
+*/
