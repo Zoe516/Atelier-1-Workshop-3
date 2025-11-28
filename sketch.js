@@ -1,54 +1,43 @@
-let Bottle;
 let BottleGif;
-//let value = 0;
 let playState = 0;
 let waterRefill;
+let happyBottle;
 let water = 0;
 let frustration = 20;
 let frustrationAmount = 0;
 let angryBottle;
 let park;
 let beach;
-let timer2 = 0;
-let timer1 = 60;
+let timer1 = 0;
 let button;
-let button1;
-let button2;
-let button3;
 let location1 = true;
-let characterPosx = 0;
-let characterLook;
+let fullBottle;
+let confetti;
+let timer = false
 
-/* create classes in different sketch.js's because that will make it 
-so much easier to manage and keep track of everything. storing the talking
-function, locations, and interactions in different files*/
-/*interactions I need to work on: conversational bubbles,singing 
-first location and second location, second location is water tower:
-writing on notepad 
-*/
-let myCharacter = {
-  x: characterPosx,
+let characterLook = {
+  x: 0,
   y: 0,
-  display: function(){
-    characterLook = Image(Bottle,characterPosx,0,width,height);
-  }
 }
 
+let charLookX = 0;
+let charLookY = 0;
+
 function preload(){
-  Bottle = loadImage('images/BOTTLE.01.png');
   BottleGif = loadImage('images/bottle.gif');
   waterRefill = loadImage('images/waterrefill.gif');
   angryBottle = loadImage('images/angry_bottle.gif');
   park = loadImage('images/Park_stock.png');
   beach = loadImage('images/Better_beach_stock.jpg');
+  happyBottle = loadImage('images/happy_bottle.png');
+  fullBottle = loadImage('images/full_bottle.png');
+  confetti = loadImage('images/confetti.gif');
 }
 
 function setup() {
- // showDebug();
   createCanvas(windowWidth, windowHeight);
   enableGyroTap();
   lockGestures();
-  angleMode(DEGREES);
 }
 
 function draw() {
@@ -59,50 +48,35 @@ function draw() {
   else if(location1 == false){
     image(beach,0,0,width,height) 
   }
-  if(playState>=1)
-    { 
-    characterLook = image(BottleGif,0,0)
-    }
-  else if(playState <= 0)
-    {
-    characterLook = image(Bottle,0,0) 
-    }
   if (playState <= 0){
   playState = 0
   }
   if (playState >= 4){
     playState = 4
   }
+  
   playState = playState - 1
-  if (frustration >= 75){
-    characterLook = image(angryBottle,0,0)
+  
+  if (frustration >= 200){
+    frustration = 200
   }
-  /*
-  if (frustration >= 100){
-    frustration = 100
-  }
-  */
+  
   else if (frustration <= 0){
     frustration = 0
   }
-  if (water == 1){
-    image(waterRefill,0,0)
+  
+  if (frustration <= 149){
+   characterLook = image(angryBottle,charLookX,charLookY)
   }
-  if (frustration <= 74){
-    textSize(32);
-    fill(255);
-    stroke(0);
-    strokeWeight(4);
-    text('Dont shake the bottle!', 15, 425);
+  
+  if (frustration >= 151){
+    characterLook = image(fullBottle,charLookX,charLookY)
   }
-  if (frustration >= 75){
-    textSize(32);
-    fill(255);
-    stroke(0);
-    strokeWeight(4);
-    text(':(, now tap to make her feel better.', 15, 425);
-  }
-  if (window.sensorsEnabled && timer1 >0){
+  
+  if (frustration == 150){
+    timer = true 
+   characterLook = image(happyBottle,charLookX,charLookY)
+   if (timer1 >0){
    textAlign(CENTER, CENTER);
    textSize(100);
    text(timer1, width/2, height/2); 
@@ -110,45 +84,35 @@ function draw() {
      timer1 --;
    }
    if (timer1 == 0) {
-     location1 = false 
-     timer2 = 10
+     timer1 = 0
+     image(confetti,charLookX,charLookY)
    }
   }
-   if (window.sensorsEnabled && timer2 >0){
-   textAlign(CENTER, CENTER);
-   textSize(100);
-   text(timer2, width/2, height/2); 
-   if (frameCount % 60 == 0 && timer2 > 0) { 
-     timer2 --;
-   }
-   if (timer2 == 0) {
-     timer2 = 0
-   }
   }
-  textAlign(CENTER, CENTER);
-  textSize(100);
-  text(frustration, 300, 100); 
-  
-//  button = createButton('talk');
-//  button.touchStarted(startConversation);
-  
- /* if (speech == true){
-    startConversation()
+  frustration = frustration + frustrationAmount
+  if (water == 1){
+    image(waterRefill,charLookX,charLookY)
   }
-*/
-  frustration = frustration - frustrationAmount
-/*
-  if (window.sensorsEnabled){
-    let rz = rotationZ;
-    frustration = int(rz)
-  }
-  */
+  if(playState>=1)
+    { 
+    characterLook = image(BottleGif,charLookX,charLookY)
+    }
+  else if(playState <= 0)
+    {
+   // image(angryBottle,charLookX,charLookY)
+    }
+   stroke(10)
+   fill('cyan')
+   textSize(20);
+   text('Tap or Shake the water bottle',20,450);
+   text('to fill or empty it',80,500);
+   text('until its happy',90,550);
 } 
 
 function deviceShaken() {
   if (window.sensorsEnabled) {
     playState = playState + 2;
-    frustration = frustration + 0.5
+    frustration = frustration - 1
   }
 }
 
@@ -157,24 +121,14 @@ function touchStarted(){
     water = 1 
     frustrationAmount = 1
   }
+  return false;
 }
 
 function touchEnded(){
   water = 0
   frustrationAmount = 0
+  return false;
 }
-/*
-function startConversation(){
-  button1 = createButton('What do you like to do?')
-  button1.touchStarted(one)
-  
-  if (one){
-    textSize(32);
-    fill(255);
-    stroke(0);
-    strokeWeight(4);
-    text('I love to go surfing! Its my favourite thing to do. The ocean is the most magnificent place to be. The clear blue water, the seaweed and coral reefs give me great peace!', 15, 425);
+ if (timer == true){
+    timer1 = 5
   }
-  button2 = createButton()
-}
-*/
