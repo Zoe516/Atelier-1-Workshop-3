@@ -3,7 +3,7 @@ let playState = 0;
 let waterRefill;
 let happyBottle;
 let water = 0;
-let frustration = 20;
+let frustration = 0;
 let frustrationAmount = 0;
 let angryBottle;
 let park;
@@ -13,7 +13,10 @@ let button;
 let location1 = true;
 let fullBottle;
 let confetti;
-let timer = false
+let timer = false;
+let timer2 = 0; 
+let timer2Set = false;
+let explosion;
 
 let characterLook = {
   x: 0,
@@ -32,6 +35,7 @@ function preload(){
   happyBottle = loadImage('images/happy_bottle.png');
   fullBottle = loadImage('images/full_bottle.png');
   confetti = loadImage('images/confetti.gif');
+  explosion = loadImage('images/explosion.gif');
 }
 
 function setup() {
@@ -56,39 +60,68 @@ function draw() {
   }
   
   playState = playState - 1
-  
-  if (frustration >= 200){
-    frustration = 200
+
+  if (frustration >= 200 && timer2Set == false){
+  //  frustration = 200
+    timer2Set = true
+    timer2 = 3
   }
   
-  else if (frustration <= 0){
+  if (timer2Set == true && timer2 >0){
+//   fill('red')
+//   textSize(100);
+//   text(timer2, width/2, height/2); 
+   if (frameCount % 60 == 0 && timer2 > 0) { 
+     timer2 --;
+   }
+    image(explosion,0,0)
+  }
+  
+  if (timer2Set == true && timer2 <= 0){
+    timer2Set = false
     frustration = 0
   }
   
-  if (frustration <= 149){
-   characterLook = image(angryBottle,charLookX,charLookY)
+  if (timer2Set == false){
+  
+  if (frustration <= 0){
+    frustration = 0
   }
   
-  if (frustration >= 151){
-    characterLook = image(fullBottle,charLookX,charLookY)
+  if (frustration <= 149 && playState <= 0){
+   characterLook = image(angryBottle,charLookX,charLookY)
+    timer = false
   }
+  
+  if (frustration >= 151 && playState <= 0){
+    characterLook = image(fullBottle,charLookX,charLookY)
+    timer = false
+  }
+  
+  
   
   if (frustration == 150){
+    characterLook = image(happyBottle,charLookX,charLookY)
+  }
+  if (frustration == 150 && timer == false){
     timer = true 
-   characterLook = image(happyBottle,charLookX,charLookY)
-   if (timer1 >0){
-   textAlign(CENTER, CENTER);
+    timer1 = 3
+  }
+  
+   if (timer1 >0 && timer == true){
+   //textAlign(CENTER, CENTER);
    textSize(100);
    text(timer1, width/2, height/2); 
    if (frameCount % 60 == 0 && timer1 > 0) { 
      timer1 --;
    }
-   if (timer1 == 0) {
+  }
+  
+   if (timer1 == 0 && timer == true) {
      timer1 = 0
      image(confetti,charLookX,charLookY)
    }
-  }
-  }
+  
   frustration = frustration + frustrationAmount
   if (water == 1){
     image(waterRefill,charLookX,charLookY)
@@ -97,16 +130,14 @@ function draw() {
     { 
     characterLook = image(BottleGif,charLookX,charLookY)
     }
-  else if(playState <= 0)
-    {
-   // image(angryBottle,charLookX,charLookY)
-    }
-   stroke(10)
-   fill('cyan')
-   textSize(20);
-   text('Tap or Shake the water bottle',20,450);
-   text('to fill or empty it',80,500);
-   text('until its happy',90,550);
+   strokeWeight(5)
+   stroke(20)
+   fill('white')
+   textSize(30);
+   text('Tap to fill the water bottle.',20,450);
+   text('Shake to empty it.',20,500);
+   text('Keep doing this until its happy!',20,550);
+  }
 } 
 
 function deviceShaken() {
@@ -129,6 +160,3 @@ function touchEnded(){
   frustrationAmount = 0
   return false;
 }
- if (timer == true){
-    timer1 = 5
-  }
